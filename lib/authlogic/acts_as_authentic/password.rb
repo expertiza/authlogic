@@ -250,8 +250,16 @@ module Authlogic
               return if ignore_blank_passwords? && pass.blank?
               before_password_set
               @password = pass
+              
+              arguments_type = nil
+              if act_like_restful_authentication?
+                arguments_type = :restful_authentication
+              elsif salt_first?
+                arguments_type = :salt_first
+              end
+
               send("#{password_salt_field}=", Authlogic::Random.friendly_token) if password_salt_field
-              send("#{crypted_password_field}=", crypto_provider.encrypt(*encrypt_arguments(@password, false, act_like_restful_authentication? ? :restful_authentication : nil)))
+              send("#{crypted_password_field}=", crypto_provider.encrypt(*encrypt_arguments(@password, false, arguments_type)))
               @password_changed = true
               after_password_set
             end
@@ -272,6 +280,7 @@ module Authlogic
               arguments_type = (act_like_restful_authentication? && index == 0) ||
                 (transition_from_restful_authentication? && index > 0 && encryptor == Authlogic::CryptoProviders::Sha1) ?
                 :restful_authentication : nil
+              arguments_type = :salt_first if salt_first?
             
               if encryptor.matches?(crypted, *encrypt_arguments(attempted_password, check_against_database, arguments_type))
                 transition_password(attempted_password) if transition_password?(index, encryptor, crypted, check_against_database)
@@ -314,6 +323,8 @@ module Authlogic
               case arguments_type
               when :restful_authentication
                 [REST_AUTH_SITE_KEY, salt, raw_password, REST_AUTH_SITE_KEY].compact
+              when :salt_first
+                [salt, raw_password]
               else
                 [raw_password, salt].compact
               end
