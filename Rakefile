@@ -4,7 +4,7 @@ require 'rake'
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = "authlogic"
+    gem.name = "expertiza-authlogic"
     gem.summary = "A clean, simple, and unobtrusive ruby authentication solution."
     gem.email = "bjohnson@binarylogic.com"
     gem.homepage = "http://github.com/binarylogic/authlogic"
