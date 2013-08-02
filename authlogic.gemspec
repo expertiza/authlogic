@@ -2,7 +2,7 @@
 $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
-  s.name        = "authlogic"
+  s.name        = "expertiza-authlogic"
   s.version     = "3.2.0"
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Ben Johnson"]
