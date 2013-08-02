@@ -23,6 +23,18 @@ module Authlogic
           r
         end
         alias_method :act_like_restful_authentication=, :act_like_restful_authentication
+
+        # If migrating from an password encryption system that prepends the salt
+        # to the raw password before hashing, set this to true.
+        #
+        # * <tt>Default:</tt> false
+        # * <tt>Accepts:</tt> Boolean
+        def salt_first(value = nil)
+          r = rw_config(:salt_first, value, false)
+          set_restful_authentication_config if value
+          r
+        end
+        alias_method :salt_first=, :salt_first
         
         # This works just like act_like_restful_authentication except that it will start transitioning your users to the algorithm you
         # specify with the crypto provider option. The next time they log in it will resave their password with the new algorithm
@@ -34,6 +46,10 @@ module Authlogic
           r
         end
         alias_method :transition_from_restful_authentication=, :transition_from_restful_authentication
+
+        def salt_first?
+          self.class.salt_first == true
+        end
         
         private
           def set_restful_authentication_config
