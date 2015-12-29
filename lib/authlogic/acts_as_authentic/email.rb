@@ -45,7 +45,7 @@ module Authlogic
         end
         alias_method :validates_length_of_email_field_options=, :validates_length_of_email_field_options
 
-        # A convenience function to merge options into the validates_length_of_email_field_options. So intead of:
+        # A convenience function to merge options into the validates_length_of_email_field_options. So instead of:
         #
         #   self.validates_length_of_email_field_options = validates_length_of_email_field_options.merge(:my_option => my_value)
         #
@@ -62,10 +62,13 @@ module Authlogic
         # merge options into it. Checkout the convenience function merge_validates_format_of_email_field_options to merge
         # options.</b>
         #
-        # * <tt>Default:</tt> {:with => Authlogic::Regex.email, :message => lambda {I18n.t('error_messages.email_invalid', :default => "should look like an email address.")}}
+        # To validate international email addresses, enable the provided alternate regex:
+        # * <tt>validates_format_of_email_field_options({:with => Authlogic::Regex.email_nonascii})</tt>
+        #
+        # * <tt>Default:</tt> {:with => Authlogic::Regex.email, :message => Proc.new {I18n.t('error_messages.email_invalid', :default => "should look like an email address.")}}
         # * <tt>Accepts:</tt> Hash of options accepted by validates_format_of
         def validates_format_of_email_field_options(value = nil)
-          rw_config(:validates_format_of_email_field_options, value, {:with => Authlogic::Regex.email, :message => I18n.t('error_messages.email_invalid', :default => "should look like an email address.")})
+          rw_config(:validates_format_of_email_field_options, value, {:with => Authlogic::Regex.email, :message => Proc.new{I18n.t('error_messages.email_invalid', :default => "should look like an email address.")}})
         end
         alias_method :validates_format_of_email_field_options=, :validates_format_of_email_field_options
 

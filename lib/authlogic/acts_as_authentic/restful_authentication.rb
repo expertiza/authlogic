@@ -8,7 +8,7 @@ module Authlogic
           include InstanceMethods
         end
       end
-      
+
       module Config
         # Switching an existing app to Authlogic from restful_authentication? No problem, just set this true and your users won't know
         # anything changed. From your database perspective nothing will change at all. Authlogic will continue to encrypt passwords
@@ -24,6 +24,7 @@ module Authlogic
         end
         alias_method :act_like_restful_authentication=, :act_like_restful_authentication
 
+
         # If migrating from an password encryption system that prepends the salt
         # to the raw password before hashing, set this to true.
         #
@@ -36,10 +37,11 @@ module Authlogic
         end
         alias_method :salt_first=, :salt_first
         
+
         # This works just like act_like_restful_authentication except that it will start transitioning your users to the algorithm you
         # specify with the crypto provider option. The next time they log in it will resave their password with the new algorithm
         # and any new record will use the new algorithm as well. Make sure to update your users table if you are using the default
-        # migration since it will set crypted_password and salt columns to a maximum width of 40 characters which is not enough. 
+        # migration since it will set crypted_password and salt columns to a maximum width of 40 characters which is not enough.
         def transition_from_restful_authentication(value = nil)
           r = rw_config(:transition_from_restful_authentication, value, false)
           set_restful_authentication_config if value
@@ -61,13 +63,13 @@ module Authlogic
             end
           end
       end
-      
+
       module InstanceMethods
         private
           def act_like_restful_authentication?
             self.class.act_like_restful_authentication == true
           end
-          
+
           def transition_from_restful_authentication?
             self.class.transition_from_restful_authentication == true
           end

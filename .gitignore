@@ -6,5 +6,7 @@ pkg/*
 coverage/*
 doc/*
 benchmarks/*
-.specification
 .rvmrc
+test/gemfiles/Gemfile*.lock
+.bundle
+Gemfile.lock

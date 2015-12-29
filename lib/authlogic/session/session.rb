@@ -12,7 +12,7 @@ module Authlogic
           after_persisting :update_session, :unless => :single_access?
         end
       end
-      
+
       # Configuration for the session feature.
       module Config
         # Works exactly like cookie_key, but for sessions. See cookie_key for more info.
@@ -24,7 +24,7 @@ module Authlogic
         end
         alias_method :session_key=, :session_key
       end
-      
+
       # Instance methods for the session feature.
       module InstanceMethods
         private
@@ -35,23 +35,23 @@ module Authlogic
               # Allow finding by persistence token, because when records are created the session is maintained in a before_save, when there is no id.
               # This is done for performance reasons and to save on queries.
               record = record_id.nil? ?
-                search_for_record("find_by_persistence_token", persistence_token) :
-                search_for_record("find_by_#{klass.primary_key}", record_id)
+                search_for_record("find_by_persistence_token", persistence_token.to_s) :
+                search_for_record("find_by_#{klass.primary_key}", record_id.to_s)
               self.unauthorized_record = record if record && record.persistence_token == persistence_token
               valid?
             else
               false
             end
           end
-          
+
           def session_credentials
-            [controller.session[session_key], controller.session["#{session_key}_#{klass.primary_key}"]].compact
+            [controller.session[session_key], controller.session["#{session_key}_#{klass.primary_key}"]].collect { |i| i.nil? ? i : i.to_s }.compact
           end
-          
+
           def session_key
             build_key(self.class.session_key)
           end
-          
+
           def update_session
             controller.session[session_key] = record && record.persistence_token
             controller.session["#{session_key}_#{klass.primary_key}"] = record && record.send(record.class.primary_key)

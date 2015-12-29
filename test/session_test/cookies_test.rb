@@ -65,6 +65,18 @@ module SessionTest
         session = UserSession.new
         assert_equal false, session.httponly
       end
+
+      def test_sign_cookie
+        UserSession.sign_cookie = true
+        assert_equal true, UserSession.sign_cookie
+        session = UserSession.new
+        assert_equal true, session.sign_cookie
+
+        UserSession.sign_cookie false
+        assert_equal false, UserSession.sign_cookie
+        session = UserSession.new
+        assert_equal false, session.sign_cookie
+      end
     end
 
     class InstanceMethodsTest < ActiveSupport::TestCase
@@ -116,6 +128,14 @@ module SessionTest
         assert_equal ben, session.record
       end
 
+      def test_persist_persist_by_cookie_with_blank_persistence_token
+        ben = users(:ben)
+        ben.update_column(:persistence_token, "")
+        assert !UserSession.find
+        set_cookie_for(ben)
+        assert !UserSession.find
+      end
+
       def test_remember_me_expired
         ben = users(:ben)
         session = UserSession.new(ben)
@@ -136,12 +156,27 @@ module SessionTest
         assert_equal "#{ben.persistence_token}::#{ben.id}", controller.cookies["user_credentials"]
       end
 
-      def test_after_save_save_cookie_with_remember_me
+      def test_after_save_save_cookie_signed
         ben = users(:ben)
+
+        assert_nil controller.cookies["user_credentials"]
+        payload = "#{ben.persistence_token}::#{ben.id}"
+
         session = UserSession.new(ben)
-        session.remember_me = true
+        session.sign_cookie = true
         assert session.save
-        assert_equal "#{ben.persistence_token}::#{ben.id}::#{session.remember_me_until}", controller.cookies["user_credentials"]
+        assert_equal payload, controller.cookies.signed["user_credentials"]
+        assert_equal "#{payload}--#{Digest::SHA1.hexdigest payload}", controller.cookies.signed.parent_jar["user_credentials"]
+      end
+
+      def test_after_save_save_cookie_with_remember_me
+        Timecop.freeze do
+          ben = users(:ben)
+          session = UserSession.new(ben)
+          session.remember_me = true
+          assert session.save
+          assert_equal "#{ben.persistence_token}::#{ben.id}::#{session.remember_me_until.iso8601}", controller.cookies["user_credentials"]
+        end
       end
 
       def test_after_destroy_destroy_cookie

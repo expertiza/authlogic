@@ -6,7 +6,7 @@ module Authlogic
   # this class, making it much easier to implement in I18n library / plugin you want. Use this as a layer that sits between Authlogic and whatever I18n
   # library you want to use.
   #
-  # By default this uses the rails I18n library, if it exists. If it doesnt exist it just returns the default english message. The Authlogic I18n class
+  # By default this uses the rails I18n library, if it exists. If it doesn't exist it just returns the default English message. The Authlogic I18n class
   # works EXACTLY like the rails I18n class. This is because the arguments are delegated to this class.
   #
   # Here is how all messages are translated internally with Authlogic:
@@ -18,7 +18,7 @@ module Authlogic
   #   class MyAuthlogicI18nTranslator
   #     def translate(key, options = {})
   #       # you will have key which will be something like: "error_messages.password_invalid"
-  #       # you will also have options[:default], which will be the default english version of the message
+  #       # you will also have options[:default], which will be the default English version of the message
   #       # do whatever you want here with the arguments passed to you.
   #     end
   #   end
@@ -31,9 +31,10 @@ module Authlogic
   #     error_messages:
   #       login_blank: can not be blank
   #       login_not_found: is not valid
-  #       login_invalid: should use only letters, numbers, spaces, and .-_@ please.
+  #       login_invalid: should use only letters, numbers, spaces, and .-_@+ please.
   #       consecutive_failed_logins_limit_exceeded: Consecutive failed logins limit exceeded, account is disabled.
   #       email_invalid: should look like an email address.
+  #       email_invalid_international: should look like an international email address.
   #       password_blank: can not be blank
   #       password_invalid: is not valid
   #       not_active: Your account is not active

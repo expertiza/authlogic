@@ -1,3 +1,5 @@
+require 'request_store'
+
 module Authlogic
   module Session
     # Authentication can be scoped, and it's easy, you just need to define how you want to scope everything. This should help you:
@@ -17,7 +19,7 @@ module Authlogic
       module ClassMethods
         # The current scope set, should be used in the block passed to with_scope.
         def scope
-          Thread.current[:authlogic_scope]
+          RequestStore.store[:authlogic_scope]
         end
 
         # What with_scopes focuses on is scoping the query when finding the object and the name of the cookie / session. It works very similar to
@@ -32,7 +34,7 @@ module Authlogic
         #     UserSession.find
         #   end
         #
-        # Eseentially what the above does is scope the searching of the object with the sql you provided. So instead of:
+        # Essentially what the above does is scope the searching of the object with the sql you provided. So instead of:
         #
         #   User.where("login = 'ben'").first
         #
@@ -68,7 +70,7 @@ module Authlogic
 
         private
           def scope=(value)
-            Thread.current[:authlogic_scope] = value
+            RequestStore.store[:authlogic_scope] = value
           end
       end
 
